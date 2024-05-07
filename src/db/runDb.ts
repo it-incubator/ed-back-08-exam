@@ -6,7 +6,7 @@ import {UserType} from "../repository/user-repository";
 const mongoUri = settings.MONGO_URI;
 
 export const client = new MongoClient(mongoUri);
-const connection = client.db('exam-5');
+const connection = client.db('exams');
 
 export const usersCollection = connection.collection<UserType>('users');
 
