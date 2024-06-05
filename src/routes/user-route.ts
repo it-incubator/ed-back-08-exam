@@ -1,7 +1,6 @@
 import {Request, Response, Router} from 'express';
 import {userService} from '../services/user-service';
 import {userQueryRepository, UserViewType} from "../repository/user-query-repo";
-import {userRepository} from "../repository/user-repository";
 import {ResultCode} from "../common/result-code";
 
 const resultCodeToHttpException = (resultCode: ResultCode): number => {
@@ -35,7 +34,7 @@ userRouter.post('/registration', async (req: Request, res: Response<UserViewType
     return;
   }
 
-  const user = await userRepository.getUser(result.data!);
+  const user = await userQueryRepository.getUser(result.data!);
 
   if(!user) {
     //error if just created user not found
@@ -44,5 +43,5 @@ userRouter.post('/registration', async (req: Request, res: Response<UserViewType
     return;
   }
 
-  res.status(201).send(user as unknown as UserViewType);
+  res.status(201).send(user);
 });

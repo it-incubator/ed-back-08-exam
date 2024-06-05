@@ -27,7 +27,7 @@ export const userService = {
   },
 
   async updateUser(id: string, login: string, email: string, age: number): Promise<Result<null>> {
-    const user  = await userQueryRepository.getUser(id);
+    const user  = await userRepository.getUser(id);
 
     if(!user) {
       return handleNotFoundResult('such user not found');
