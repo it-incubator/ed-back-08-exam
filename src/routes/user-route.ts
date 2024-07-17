@@ -1,7 +1,7 @@
 import {Request, Response, Router} from 'express';
 import {userService} from '../services/user-service';
 import {userQueryRepository, UserViewType} from "../repository/user-query-repo";
-import {ResultCode} from "../common/result-code";
+import {Result, ResultCode} from "../common/result-code";
 
 const resultCodeToHttpException = (resultCode: ResultCode): number => {
   switch (resultCode) {
@@ -12,6 +12,10 @@ const resultCodeToHttpException = (resultCode: ResultCode): number => {
     default:
       return 500;
   }
+}
+
+const isResultSuccess = <T>(result: Result<T | null>): result is Result<T> => {
+  return result.resultCode === ResultCode.Success
 }
 
 export const userRouter = Router({});
@@ -28,13 +32,13 @@ userRouter.post('/registration', async (req: Request, res: Response<UserViewType
   const age = req.body.age;
   const result = await userService.registerUser(email, login, password, age);
 
-  if(result.resultCode !== ResultCode.Success) {
+  if(!isResultSuccess(result)) {
     res.status(resultCodeToHttpException(result.resultCode)).send(result.errorMessage);
 
     return;
   }
 
-  const user = await userQueryRepository.getUser(result.data!);
+  const user = await userQueryRepository.getUser(result.data);
 
   if(!user) {
     //error if just created user not found
